@@ -1,0 +1,2088 @@
+<!doctype html>
+<html lang="ru">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Indi Redesign Sizing</title>
+  <style>
+    :root {
+      --bg: #f6f7f9;
+      --panel: #ffffff;
+      --panel-soft: #f0f3f7;
+      --text: #1c2430;
+      --muted: #697586;
+      --line: #d8dee8;
+      --accent: #2866d8;
+      --accent-soft: #e8f0ff;
+      --danger: #c93636;
+      --warning: #a06100;
+      --success: #157a47;
+      --radius: 8px;
+      --shadow: 0 10px 28px rgba(18, 28, 45, 0.08);
+      --font: Inter, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      background: var(--bg);
+      color: var(--text);
+      font-family: var(--font);
+      font-size: 14px;
+      line-height: 1.4;
+    }
+
+    button,
+    input,
+    select,
+    textarea {
+      font: inherit;
+    }
+
+    .app {
+      min-height: 100vh;
+    }
+
+    .topbar {
+      position: sticky;
+      top: 0;
+      z-index: 20;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+      padding: 16px 24px;
+      background: rgba(255, 255, 255, 0.92);
+      border-bottom: 1px solid var(--line);
+      backdrop-filter: blur(14px);
+    }
+
+    .title {
+      min-width: 260px;
+    }
+
+    .title h1 {
+      margin: 0;
+      font-size: 20px;
+      line-height: 1.2;
+    }
+
+    .title p {
+      margin: 4px 0 0;
+      color: var(--muted);
+      font-size: 13px;
+    }
+
+    .actions {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: flex-end;
+      gap: 8px;
+    }
+
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 36px;
+      padding: 8px 12px;
+      border: 1px solid var(--line);
+      border-radius: 7px;
+      background: var(--panel);
+      color: var(--text);
+      cursor: pointer;
+      white-space: nowrap;
+    }
+
+    .btn:hover {
+      border-color: #aab5c5;
+      background: #f9fafc;
+    }
+
+    .btn.primary {
+      border-color: var(--accent);
+      background: var(--accent);
+      color: #fff;
+    }
+
+    .btn.danger {
+      border-color: #efc7c7;
+      color: var(--danger);
+    }
+
+    .sync-status {
+      display: inline-flex;
+      align-items: center;
+      min-height: 36px;
+      padding: 8px 10px;
+      border: 1px solid var(--line);
+      border-radius: 7px;
+      background: var(--panel-soft);
+      color: var(--muted);
+      font-size: 12px;
+      white-space: nowrap;
+    }
+
+    .sync-status.is-online {
+      border-color: #b8dbc8;
+      background: #edf8f2;
+      color: var(--success);
+    }
+
+    .sync-status.is-error {
+      border-color: #efc7c7;
+      background: #fff4f4;
+      color: var(--danger);
+    }
+
+    .btn.drag-handle {
+      min-width: 36px;
+      padding: 8px 10px;
+      color: var(--muted);
+      cursor: grab;
+    }
+
+    .btn.drag-handle:active {
+      cursor: grabbing;
+    }
+
+    .layout {
+      display: grid;
+      grid-template-columns: 260px 1fr;
+      gap: 20px;
+      padding: 20px 24px 32px;
+    }
+
+    .sidebar {
+      position: sticky;
+      top: 86px;
+      align-self: start;
+      display: grid;
+      gap: 14px;
+    }
+
+    .nav {
+      padding: 8px;
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      background: var(--panel);
+      box-shadow: var(--shadow);
+    }
+
+    .nav a {
+      display: block;
+      padding: 10px 12px;
+      border-radius: 6px;
+      color: var(--text);
+      text-decoration: none;
+    }
+
+    .nav a:hover {
+      background: var(--panel-soft);
+    }
+
+    .summary {
+      display: grid;
+      gap: 8px;
+      padding: 12px;
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      background: var(--panel);
+    }
+
+    .metric {
+      display: flex;
+      justify-content: space-between;
+      gap: 12px;
+      padding: 8px 0;
+      border-bottom: 1px solid var(--line);
+    }
+
+    .metric:last-child {
+      border-bottom: 0;
+    }
+
+    .metric span {
+      color: var(--muted);
+    }
+
+    .metric strong {
+      font-variant-numeric: tabular-nums;
+    }
+
+    main {
+      display: grid;
+      gap: 18px;
+      min-width: 0;
+    }
+
+    section {
+      overflow: hidden;
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      background: var(--panel);
+      box-shadow: var(--shadow);
+    }
+
+    #screens {
+      overflow: visible;
+    }
+
+    .section-head {
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      gap: 12px;
+      padding: 16px;
+      border-bottom: 1px solid var(--line);
+    }
+
+    .section-head h2 {
+      margin: 0;
+      font-size: 17px;
+      line-height: 1.2;
+    }
+
+    .section-head p {
+      margin: 5px 0 0;
+      color: var(--muted);
+      font-size: 13px;
+    }
+
+    .table-wrap {
+      overflow-x: auto;
+    }
+
+    table {
+      width: 100%;
+      min-width: 1180px;
+      border-collapse: collapse;
+    }
+
+    th,
+    td {
+      padding: 9px 8px;
+      border-bottom: 1px solid var(--line);
+      vertical-align: top;
+      text-align: left;
+    }
+
+    th {
+      position: sticky;
+      top: 0;
+      z-index: 5;
+      background: #f8fafc;
+      color: #405064;
+      font-size: 12px;
+      font-weight: 700;
+      text-transform: uppercase;
+    }
+
+    tr:last-child td {
+      border-bottom: 0;
+    }
+
+    tr.dragging {
+      opacity: 0.45;
+    }
+
+    tr.drag-over-before td {
+      box-shadow: inset 0 2px 0 var(--accent);
+    }
+
+    tr.drag-over-after td {
+      box-shadow: inset 0 -2px 0 var(--accent);
+    }
+
+    input[type="text"],
+    input[type="number"],
+    select,
+    textarea {
+      width: 100%;
+      min-height: 34px;
+      padding: 7px 8px;
+      border: 1px solid var(--line);
+      border-radius: 6px;
+      background: #fff;
+      color: var(--text);
+    }
+
+    textarea {
+      min-height: 66px;
+      resize: vertical;
+    }
+
+    input[type="checkbox"] {
+      width: 17px;
+      height: 17px;
+      margin: 8px auto 0;
+      display: block;
+      accent-color: var(--accent);
+    }
+
+    .small {
+      min-width: 82px;
+      max-width: 96px;
+    }
+
+    .medium {
+      min-width: 130px;
+    }
+
+    .wide {
+      min-width: 210px;
+    }
+
+    td.row-actions {
+      display: flex;
+      align-items: flex-start;
+      gap: 6px;
+    }
+
+    .note {
+      padding: 12px 16px;
+      border-top: 1px solid var(--line);
+      background: #fbfcfe;
+      color: var(--muted);
+      font-size: 13px;
+    }
+
+    .screen-sizing-guide {
+      position: sticky;
+      bottom: 0;
+      z-index: 8;
+      border-right: 1px solid var(--line);
+      border-bottom: 1px solid var(--line);
+      border-left: 1px solid var(--line);
+      border-radius: 0 0 var(--radius) var(--radius);
+      box-shadow: 0 -8px 20px rgba(18, 28, 45, 0.08);
+    }
+
+    .pill {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 24px;
+      padding: 3px 8px;
+      border-radius: 999px;
+      background: var(--accent-soft);
+      color: #174ea6;
+      font-size: 12px;
+      font-weight: 700;
+    }
+
+    .scope-grid {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 12px;
+      padding: 16px;
+    }
+
+    .field {
+      display: grid;
+      gap: 6px;
+    }
+
+    .field label {
+      color: #405064;
+      font-size: 12px;
+      font-weight: 700;
+      text-transform: uppercase;
+    }
+
+    .check-grid {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 8px 12px;
+      padding: 16px;
+    }
+
+    .check-item {
+      display: grid;
+      grid-template-columns: 22px 1fr;
+      align-items: center;
+      gap: 8px;
+      min-height: 36px;
+      padding: 7px 8px;
+      border: 1px solid var(--line);
+      border-radius: 6px;
+      background: #fff;
+    }
+
+    .check-item input {
+      margin: 0;
+    }
+
+    .check-item span {
+      overflow-wrap: anywhere;
+    }
+
+    @media (max-width: 980px) {
+      .topbar {
+        align-items: flex-start;
+        flex-direction: column;
+      }
+
+      .actions {
+        justify-content: flex-start;
+      }
+
+      .layout {
+        grid-template-columns: 1fr;
+      }
+
+      .sidebar {
+        position: static;
+      }
+
+      .scope-grid,
+      .check-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    @media print {
+      .topbar,
+      .sidebar,
+      .row-actions,
+      .section-actions {
+        display: none;
+      }
+
+      body {
+        background: #fff;
+      }
+
+      .layout {
+        display: block;
+        padding: 0;
+      }
+
+      section {
+        break-inside: avoid;
+        box-shadow: none;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="app">
+    <header class="topbar">
+      <div class="title">
+        <h1>Indi redesign sizing</h1>
+        <p>Рабочая таблица для оценки сценариев, экранов, UX-рисков и дизайн-системы.</p>
+      </div>
+      <div class="actions">
+        <span class="sync-status" data-sync-status>Локальная версия</span>
+        <button class="btn" type="button" data-action="save">Сохранить</button>
+        <button class="btn" type="button" data-action="export-json">JSON</button>
+        <button class="btn" type="button" data-action="export-csv">CSV экранов</button>
+        <button class="btn" type="button" data-action="print">Печать/PDF</button>
+        <button class="btn danger" type="button" data-action="reset">Сбросить</button>
+      </div>
+    </header>
+
+    <div class="layout">
+      <aside class="sidebar">
+        <nav class="nav" aria-label="Разделы">
+          <a href="#scope">1. Рамки</a>
+          <a href="#scenarios">2. Сценарии</a>
+          <a href="#screens">3. Экраны</a>
+          <a href="#research">4. UX-риски</a>
+          <a href="#components">5. Компоненты</a>
+          <a href="#checklist">6. Чеклист</a>
+        </nav>
+        <div class="summary" aria-live="polite">
+          <div class="metric"><span>Сценарии</span><strong data-summary="scenarios">0</strong></div>
+          <div class="metric"><span>Экраны</span><strong data-summary="screens">0</strong></div>
+          <div class="metric"><span>Paywall-точки</span><strong data-summary="paywalls">0</strong></div>
+          <div class="metric"><span>UX-тесты</span><strong data-summary="tests">0</strong></div>
+          <div class="metric"><span>Экранов с dark theme</span><strong data-summary="dark">0</strong></div>
+          <div class="metric"><span>Оценка экранов</span><strong data-summary="hours">0 ч</strong></div>
+        </div>
+      </aside>
+
+      <main>
+        <section id="scope">
+          <div class="section-head">
+            <div>
+              <h2>Рамки задачи</h2>
+              <p>Заполни допущения, чтобы оценка не расползалась по ходу обсуждения.</p>
+            </div>
+            <span class="pill">Discovery</span>
+          </div>
+          <div class="scope-grid">
+            <div class="field">
+              <label for="goal">Цель</label>
+              <textarea id="goal" data-persist="scope.goal">Оценить объем редизайна Indi: сценарии, экраны, компоненты, UX-риски, темы и handoff.</textarea>
+            </div>
+            <div class="field">
+              <label for="platform">Платформа</label>
+              <select id="platform" data-persist="scope.platform">
+                <option>Mobile app</option>
+                <option>Mobile app + Web</option>
+                <option>iOS</option>
+                <option>Android</option>
+                <option>Не определено</option>
+              </select>
+            </div>
+            <div class="field">
+              <label for="depth">Глубина редизайна</label>
+              <select id="depth" data-persist="scope.depth">
+                <option>UX + UI + дизайн-система</option>
+                <option>Только UI поверх текущего UX</option>
+                <option>UX-концепция + ключевые экраны</option>
+                <option>MVP-редизайн</option>
+                <option>Полный продуктовый редизайн</option>
+              </select>
+            </div>
+            <div class="field">
+              <label for="themes">Темы</label>
+              <select id="themes" data-persist="scope.themes">
+                <option>Light + Dark</option>
+                <option>Только Light</option>
+                <option>Dark позже</option>
+                <option>Не решено</option>
+              </select>
+            </div>
+            <div class="field">
+              <label for="handoff">Handoff</label>
+              <select id="handoff" data-persist="scope.handoff">
+                <option>Компоненты + спецификации + прототип</option>
+                <option>Только макеты</option>
+                <option>Макеты + комментарии</option>
+                <option>Не решено</option>
+              </select>
+            </div>
+            <div class="field">
+              <label for="not-included">Не входит</label>
+              <textarea id="not-included" data-persist="scope.notIncluded">Разработка, аналитика после релиза, бренд-стратегия, финальные тексты, CRM/email/push вне приложения.</textarea>
+            </div>
+          </div>
+        </section>
+
+        <section id="scenarios">
+          <div class="section-head">
+            <div>
+              <h2>Сценарии</h2>
+              <p>Сначала отмечай пользовательские сценарии, потом превращай их в экраны.</p>
+            </div>
+            <div class="section-actions">
+              <button class="btn primary" type="button" data-add-row="scenarios">Добавить сценарий</button>
+            </div>
+          </div>
+          <div class="table-wrap">
+            <table>
+              <thead>
+                <tr>
+                  <th class="medium">Раздел</th>
+                  <th class="wide">Сценарий</th>
+                  <th class="medium">Пользователь</th>
+                  <th class="small">Paywall</th>
+                  <th class="small">UX?</th>
+                  <th class="small">Тест?</th>
+                  <th class="medium">Приоритет</th>
+                  <th class="wide">Комментарий</th>
+                  <th class="small row-actions">Действие</th>
+                </tr>
+              </thead>
+              <tbody data-table="scenarios"></tbody>
+            </table>
+          </div>
+          <div class="note">Paywall отмечай в сценариях, где бесплатный пользователь видит ограничение, превью, лимит или апгрейд.</div>
+        </section>
+
+        <section id="screens">
+          <div class="section-head">
+            <div>
+              <h2>Экраны</h2>
+              <p>Считай не только страницы, но и существенные состояния: locked, empty, error, success.</p>
+            </div>
+            <div class="section-actions">
+              <button class="btn primary" type="button" data-add-row="screens">Добавить экран</button>
+            </div>
+          </div>
+          <div class="table-wrap">
+            <table>
+              <thead>
+                <tr>
+                  <th class="wide">Экран</th>
+                  <th class="medium">Раздел</th>
+                  <th class="medium">Тип</th>
+                  <th class="medium">Сложность</th>
+                  <th class="small">Free</th>
+                  <th class="small">Paid</th>
+                  <th class="small">Dark</th>
+                  <th class="medium">Состояния</th>
+                  <th class="wide">Компоненты</th>
+                  <th class="small">Мин ч</th>
+                  <th class="small">Макс ч</th>
+                  <th class="wide">Риски</th>
+                  <th class="small row-actions">Действие</th>
+                </tr>
+              </thead>
+              <tbody data-table="screens"></tbody>
+            </table>
+          </div>
+          <div class="note screen-sizing-guide">Ориентиры: S = 2-4 ч, M = 4-8 ч, L = 8-16 ч, XL = 16-32 ч. Для исследовательских экранов оценку лучше уточнять после wireframe-теста.</div>
+        </section>
+
+        <section id="research">
+          <div class="section-head">
+            <div>
+              <h2>UX-риски и проверки</h2>
+              <p>Здесь фиксируются места, которые нельзя честно оценить без вариантов или быстрых тестов.</p>
+            </div>
+            <div class="section-actions">
+              <button class="btn primary" type="button" data-add-row="research">Добавить риск</button>
+            </div>
+          </div>
+          <div class="table-wrap">
+            <table>
+              <thead>
+                <tr>
+                  <th class="medium">Зона</th>
+                  <th class="wide">UX-вопрос</th>
+                  <th class="wide">Гипотеза</th>
+                  <th class="medium">Метод проверки</th>
+                  <th class="small">Респ.</th>
+                  <th class="small">Мин ч</th>
+                  <th class="small">Макс ч</th>
+                  <th class="wide">Критерий решения</th>
+                  <th class="small row-actions">Действие</th>
+                </tr>
+              </thead>
+              <tbody data-table="research"></tbody>
+            </table>
+          </div>
+        </section>
+
+        <section id="components">
+          <div class="section-head">
+            <div>
+              <h2>Дизайн-система и компоненты</h2>
+              <p>Отмечай компоненты, токены и варианты, чтобы не прятать эту работу внутри экранов.</p>
+            </div>
+            <div class="section-actions">
+              <button class="btn primary" type="button" data-add-row="components">Добавить компонент</button>
+            </div>
+          </div>
+          <div class="table-wrap">
+            <table>
+              <thead>
+                <tr>
+                  <th class="wide">Компонент / токен</th>
+                  <th class="medium">Группа</th>
+                  <th class="small">Light</th>
+                  <th class="small">Dark</th>
+                  <th class="small">Variants</th>
+                  <th class="medium">Сложность</th>
+                  <th class="small">Мин ч</th>
+                  <th class="small">Макс ч</th>
+                  <th class="wide">Комментарий</th>
+                  <th class="small row-actions">Действие</th>
+                </tr>
+              </thead>
+              <tbody data-table="components"></tbody>
+            </table>
+          </div>
+        </section>
+
+        <section id="checklist">
+          <div class="section-head">
+            <div>
+              <h2>Финальный чеклист оценки</h2>
+              <p>Когда все пункты отмечены, оценку уже можно обсуждать как рабочий диапазон.</p>
+            </div>
+            <span class="pill">Ready check</span>
+          </div>
+          <div class="check-grid">
+            <label class="check-item"><input type="checkbox" data-persist="check.scope"><span>Понятны границы редизайна</span></label>
+            <label class="check-item"><input type="checkbox" data-persist="check.scenarios"><span>Сценарии выписаны</span></label>
+            <label class="check-item"><input type="checkbox" data-persist="check.freePaid"><span>Free/Paid отличия отмечены</span></label>
+            <label class="check-item"><input type="checkbox" data-persist="check.paywall"><span>Paywall-точки отмечены</span></label>
+            <label class="check-item"><input type="checkbox" data-persist="check.screens"><span>Список экранов собран</span></label>
+            <label class="check-item"><input type="checkbox" data-persist="check.states"><span>Состояния учтены</span></label>
+            <label class="check-item"><input type="checkbox" data-persist="check.research"><span>UX-риски выделены</span></label>
+            <label class="check-item"><input type="checkbox" data-persist="check.tests"><span>Коридорки запланированы</span></label>
+            <label class="check-item"><input type="checkbox" data-persist="check.components"><span>Компоненты перечислены</span></label>
+            <label class="check-item"><input type="checkbox" data-persist="check.tokens"><span>Токены и темы учтены</span></label>
+            <label class="check-item"><input type="checkbox" data-persist="check.prototype"><span>Прототип учтен</span></label>
+            <label class="check-item"><input type="checkbox" data-persist="check.handoff"><span>Handoff учтен</span></label>
+          </div>
+        </section>
+      </main>
+    </div>
+  </div>
+
+  <template id="scenario-row">
+    <tr>
+      <td><select data-field="section"></select></td>
+      <td><textarea data-field="scenario"></textarea></td>
+      <td><select data-field="userType"></select></td>
+      <td><input type="checkbox" data-field="paywall"></td>
+      <td><input type="checkbox" data-field="ux"></td>
+      <td><input type="checkbox" data-field="test"></td>
+      <td><select data-field="priority"></select></td>
+      <td><textarea data-field="comment"></textarea></td>
+      <td class="row-actions"><button class="btn drag-handle" type="button" title="Перетащить строку" aria-label="Перетащить строку" data-drag-handle>↕</button><button class="btn danger" type="button" data-remove-row>Удалить</button></td>
+    </tr>
+  </template>
+
+  <template id="screen-row">
+    <tr>
+      <td><textarea data-field="screen"></textarea></td>
+      <td><select data-field="section"></select></td>
+      <td><select data-field="type"></select></td>
+      <td><select data-field="size"></select></td>
+      <td><input type="checkbox" data-field="free"></td>
+      <td><input type="checkbox" data-field="paid"></td>
+      <td><input type="checkbox" data-field="dark"></td>
+      <td><textarea data-field="states"></textarea></td>
+      <td><textarea data-field="components"></textarea></td>
+      <td><input type="number" min="0" step="0.5" data-field="minHours"></td>
+      <td><input type="number" min="0" step="0.5" data-field="maxHours"></td>
+      <td><textarea data-field="risks"></textarea></td>
+      <td class="row-actions"><button class="btn drag-handle" type="button" title="Перетащить строку" aria-label="Перетащить строку" data-drag-handle>↕</button><button class="btn danger" type="button" data-remove-row>Удалить</button></td>
+    </tr>
+  </template>
+
+  <template id="research-row">
+    <tr>
+      <td><select data-field="zone"></select></td>
+      <td><textarea data-field="question"></textarea></td>
+      <td><textarea data-field="hypothesis"></textarea></td>
+      <td><select data-field="method"></select></td>
+      <td><input type="number" min="0" step="1" data-field="respondents"></td>
+      <td><input type="number" min="0" step="0.5" data-field="minHours"></td>
+      <td><input type="number" min="0" step="0.5" data-field="maxHours"></td>
+      <td><textarea data-field="criteria"></textarea></td>
+      <td class="row-actions"><button class="btn drag-handle" type="button" title="Перетащить строку" aria-label="Перетащить строку" data-drag-handle>↕</button><button class="btn danger" type="button" data-remove-row>Удалить</button></td>
+    </tr>
+  </template>
+
+  <template id="component-row">
+    <tr>
+      <td><textarea data-field="name"></textarea></td>
+      <td><select data-field="group"></select></td>
+      <td><input type="checkbox" data-field="light"></td>
+      <td><input type="checkbox" data-field="dark"></td>
+      <td><input type="checkbox" data-field="variants"></td>
+      <td><select data-field="size"></select></td>
+      <td><input type="number" min="0" step="0.5" data-field="minHours"></td>
+      <td><input type="number" min="0" step="0.5" data-field="maxHours"></td>
+      <td><textarea data-field="comment"></textarea></td>
+      <td class="row-actions"><button class="btn drag-handle" type="button" title="Перетащить строку" aria-label="Перетащить строку" data-drag-handle>↕</button><button class="btn danger" type="button" data-remove-row>Удалить</button></td>
+    </tr>
+  </template>
+
+  <script>
+    const STORAGE_KEY = "indi-redesign-sizing-v3";
+    const LINK_TOKEN_STORAGE_KEY = "indi-redesign-link-token";
+    const API_ENDPOINT = "/api/sizing";
+
+    const options = {
+      section: ["Главная", "Прогнозы", "События", "Дневник", "Контент", "Продукты", "Консультации", "Кабинет", "Заметки", "Натальная карта", "Авторизация", "Оплата", "Подписка / Paywall", "Уведомления", "AI-чат", "Системное", "Другое"],
+      userType: ["Оба", "Free", "Paid", "Новый пользователь", "Возвращающийся", "Не решено"],
+      priority: ["P0", "P1", "P2", "P3"],
+      screenType: ["Основной экран", "Состояние", "Модалка / sheet", "Форма", "Список", "Карточка", "Оплата", "Настройки", "Системное", "Другое"],
+      size: ["S", "M", "L", "XL"],
+      zone: ["Главная", "Paywall", "Дневник", "Рекомендации", "Каталог", "Карточка продукта", "Покупка", "Консультации", "AI-чат", "Подписка", "Навигация", "Другое"],
+      method: ["Не требуется", "Экспертный аудит", "2 варианта wireframe", "Коридорка 5-7 человек", "Интервью", "Click test", "Tree testing", "A/B гипотеза"],
+      componentGroup: ["Tokens", "Navigation", "Buttons", "Forms", "Cards", "Content", "Product", "Paywall", "Feedback", "Overlays", "Data display", "Icons", "Other"]
+    };
+
+    const screenSizeHours = {
+      S: { minHours: 2, maxHours: 4 },
+      M: { minHours: 4, maxHours: 8 },
+      L: { minHours: 8, maxHours: 16 },
+      XL: { minHours: 16, maxHours: 32 }
+    };
+
+    const defaults = {
+          "scope": {
+                "goal": "Оценить объем редизайна Indi: сценарии, экраны, компоненты, UX-риски, темы и handoff.",
+                "platform": "Mobile app",
+                "depth": "UX + UI + дизайн-система",
+                "themes": "Light + Dark",
+                "handoff": "Компоненты + спецификации + прототип",
+                "notIncluded": "Разработка, аналитика после релиза, бренд-стратегия, финальные тексты, CRM/email/push вне приложения."
+          },
+          "check": {
+                "scope": false,
+                "scenarios": false,
+                "freePaid": false,
+                "paywall": false,
+                "screens": false,
+                "states": false,
+                "research": false,
+                "tests": false,
+                "components": false,
+                "tokens": false,
+                "prototype": false,
+                "handoff": false
+          },
+          "scenarios": [
+                {
+                      "section": "Главная",
+                      "scenario": "То что пользователь видит в самом начале",
+                      "userType": "Оба",
+                      "paywall": false,
+                      "ux": true,
+                      "test": true,
+                      "priority": "P0",
+                      "comment": "Ключевой первый экран, возможно несколько вариантов структуры"
+                },
+                {
+                      "section": "Прогнозы",
+                      "scenario": "Текущие прогнозы, просто подсобрать дизайн. ",
+                      "userType": "Оба",
+                      "paywall": false,
+                      "ux": false,
+                      "test": false,
+                      "priority": "P0",
+                      "comment": "Выдержать в UI дизайне, переиспользуем UX, UI, "
+                },
+                {
+                      "section": "Продукты",
+                      "scenario": "Пользователь выбирает продукт, консультацию, покупает и получает результат. Так же ему доступен в одном месте все продукты которы он видел ",
+                      "userType": "Free",
+                      "paywall": false,
+                      "ux": true,
+                      "test": true,
+                      "priority": "P0",
+                      "comment": "Важен путь от каталога до результата. Частично текущий UX и UI можно переиспользовать"
+                },
+                {
+                      "section": "Консультации",
+                      "scenario": "Пользователь выбирает тип консультации, специалиста/слот и оплачивает запись",
+                      "userType": "Free",
+                      "paywall": false,
+                      "ux": false,
+                      "test": true,
+                      "priority": "P1",
+                      "comment": "Входит в раздел продукты, я думаю оставляем текущий UX, но пересобираем UI. "
+                },
+                {
+                      "section": "Контент",
+                      "scenario": "Находит и выбирает инерисующий контент, так же ему понятно что раздел живой и он обновляется. ",
+                      "userType": "Free",
+                      "paywall": true,
+                      "ux": true,
+                      "test": true,
+                      "priority": "P0",
+                      "comment": "Пересобрать под новый раздел, стейт для плашек что что-то под paywall. "
+                },
+                {
+                      "section": "Кабинет",
+                      "scenario": "Управление подпиской, управление данными, управление, апгрейд подписки",
+                      "userType": "Оба",
+                      "paywall": false,
+                      "ux": true,
+                      "test": true,
+                      "priority": "P0",
+                      "comment": "Обновляем весь раздел, за основу берем то что есть."
+                },
+                {
+                      "section": "Дневник",
+                      "scenario": "Прочитать отмеченные ранее заметки, Отметить особые дни. ",
+                      "userType": "Оба",
+                      "paywall": false,
+                      "ux": false,
+                      "test": false,
+                      "priority": "P1",
+                      "comment": "Продумать раздел с нуля. Есть только механика заметок. Но в целом тут новый функционал. Переносим заметки.  Апгрейд сделать после всего остального. "
+                },
+                {
+                      "section": "Уведомления",
+                      "scenario": "Пользователь может узнавать самое важное что есть для него сейчас. Какие то кастомные уведомления. И история обновлений",
+                      "userType": "Оба",
+                      "paywall": false,
+                      "ux": true,
+                      "test": true,
+                      "priority": "P1",
+                      "comment": "Продумать раздел с нуля. Какие-то наработки есть. Я думаю оно с дневником очень сильно взаимосвязано"
+                }
+          ],
+          "screens": [
+                {
+                      "screen": "Global shell / bottom navigation",
+                      "section": "Системное",
+                      "type": "Основной экран",
+                      "size": "L",
+                      "free": true,
+                      "paid": true,
+                      "dark": true,
+                      "states": "Главная, Вы, Меню, active/inactive, menu counter, auth-sensitive YOU, modal windows",
+                      "components": "bottom nav, tab item, badge, modal/window container",
+                      "minHours": 8,
+                      "maxHours": 16,
+                      "risks": "Нужно проверить точный состав Меню и поведение модальных окон."
+                },
+                {
+                      "screen": "Мой день /my, /my/:date",
+                      "section": "Главная",
+                      "type": "Основной экран",
+                      "size": "XL",
+                      "free": true,
+                      "paid": true,
+                      "dark": true,
+                      "states": "loading Загружаем прогноз, personalized, feedback sent, promo dismissed, subscription promo, inactive/expired subscription paywall",
+                      "components": "calendar/date selector, day/month switcher, potential card, detail sections, feedback Да/Нет, trends card, events entry, product promo carousel",
+                      "minHours": 16,
+                      "maxHours": 32,
+                      "risks": "Ключевой первый экран; нужно не потерять иерархию прогноза, рекомендаций и промо."
+                },
+                {
+                      "screen": "Детали прогноза дня",
+                      "section": "Главная",
+                      "type": "Состояние",
+                      "size": "M",
+                      "free": true,
+                      "paid": true,
+                      "dark": true,
+                      "states": "Что делать сегодня, Что лучше не делать, usefulness feedback, feedback sent",
+                      "components": "content block, recommendation list, feedback controls",
+                      "minHours": 4,
+                      "maxHours": 8,
+                      "risks": "Может быть частью главной, но лучше считать как отдельное состояние из-за контента и фидбека."
+                },
+                {
+                      "screen": "Прогноз на месяц /my/monthly_prognosis",
+                      "section": "Прогнозы",
+                      "type": "Основной экран",
+                      "size": "L",
+                      "free": true,
+                      "paid": true,
+                      "dark": true,
+                      "states": "loading, monthly content, audio player, PDF success/error, bookmark added/removed",
+                      "components": "month overview, mood block, audio/podcast player, PDF action, bookmark action",
+                      "minHours": 8,
+                      "maxHours": 16,
+                      "risks": "Нужно проверить связку текстового прогноза, аудио, PDF и заметок."
+                },
+                {
+                      "screen": "События /my/events",
+                      "section": "События",
+                      "type": "Список",
+                      "size": "L",
+                      "free": true,
+                      "paid": true,
+                      "dark": true,
+                      "states": "empty, new event, passed event, locked/inactive subscription, event details",
+                      "components": "sphere filter/list, event card, status/probability, date range, detail entry",
+                      "minHours": 8,
+                      "maxHours": 16,
+                      "risks": "Много категорий и locked-состояний; нужно уточнить free/paid варианты."
+                },
+                {
+                      "screen": "Хаб прогнозов /prognoses",
+                      "section": "Контент",
+                      "type": "Основной экран",
+                      "size": "M",
+                      "free": true,
+                      "paid": true,
+                      "dark": true,
+                      "states": "article/list, locked content, paywall entry",
+                      "components": "content card, section list, locked preview, CTA",
+                      "minHours": 4,
+                      "maxHours": 8,
+                      "risks": "Нужно решить, остается ли отдельным хабом или сливается с главной."
+                },
+                {
+                      "screen": "Общий прогноз / prognoses-day",
+                      "section": "Контент",
+                      "type": "Карточка",
+                      "size": "M",
+                      "free": true,
+                      "paid": true,
+                      "dark": true,
+                      "states": "list, detail, locked/paywall, loading/error",
+                      "components": "article card, rich text, locked block",
+                      "minHours": 4,
+                      "maxHours": 8,
+                      "risks": "Нужно проверить фактические отличия от прогноза на главной."
+                },
+                {
+                      "screen": "Прогноз на месяц / prognoses-month",
+                      "section": "Контент",
+                      "type": "Карточка",
+                      "size": "M",
+                      "free": true,
+                      "paid": true,
+                      "dark": true,
+                      "states": "list, detail, locked/paywall, loading/error",
+                      "components": "month content card, article detail, locked block",
+                      "minHours": 4,
+                      "maxHours": 8,
+                      "risks": "Возможен дубль с monthly_prognosis; нужно решить IA."
+                },
+                {
+                      "screen": "Обзор трендов / prognoses-trend",
+                      "section": "Контент",
+                      "type": "Карточка",
+                      "size": "M",
+                      "free": true,
+                      "paid": true,
+                      "dark": true,
+                      "states": "trend card, read, listen, paywall possible",
+                      "components": "trend card, read/listen CTA, audio entry, locked block",
+                      "minHours": 4,
+                      "maxHours": 8,
+                      "risks": "Нужна единая модель карточек контента."
+                },
+                {
+                      "screen": "Важные даты / prognoses-special-day",
+                      "section": "Контент",
+                      "type": "Список",
+                      "size": "M",
+                      "free": true,
+                      "paid": true,
+                      "dark": true,
+                      "states": "important dates, best days, calendar links, locked/paywall",
+                      "components": "date list, calendar link, tag/category, locked preview",
+                      "minHours": 4,
+                      "maxHours": 8,
+                      "risks": "Нужно уточнить категории и связь с событиями."
+                },
+                {
+                      "screen": "Подкаст / podcast",
+                      "section": "Контент",
+                      "type": "Основной экран",
+                      "size": "M",
+                      "free": true,
+                      "paid": true,
+                      "dark": true,
+                      "states": "podcast player, loading, locked/paywall, error",
+                      "components": "audio player, episode card, playback controls, locked preview",
+                      "minHours": 4,
+                      "maxHours": 8,
+                      "risks": "Нужно проверить, является ли подкаст отдельным экраном или состоянием контента."
+                },
+                {
+                      "screen": "Каталог продуктов /products",
+                      "section": "Продукты",
+                      "type": "Список",
+                      "size": "L",
+                      "free": true,
+                      "paid": true,
+                      "dark": true,
+                      "states": "catalog list, purchases tab, empty purchases, promo cards",
+                      "components": "tabs Каталог/Покупки, product card, purchase card, empty state, promo card",
+                      "minHours": 8,
+                      "maxHours": 16,
+                      "risks": "Ключевая коммерческая зона; нужно уточнить сортировку, категории и покупки."
+                },
+                {
+                      "screen": "Покупки продуктов",
+                      "section": "Продукты",
+                      "type": "Список",
+                      "size": "M",
+                      "free": true,
+                      "paid": true,
+                      "dark": true,
+                      "states": "empty purchases Здесь появятся ваши покупки, purchased list, shared result",
+                      "components": "purchase card, empty state, result entry",
+                      "minHours": 4,
+                      "maxHours": 8,
+                      "risks": "Нужно проверить реальные paid-состояния."
+                },
+                {
+                      "screen": "Звездный аватар /products/person",
+                      "section": "Продукты",
+                      "type": "Основной экран",
+                      "size": "L",
+                      "free": true,
+                      "paid": true,
+                      "dark": true,
+                      "states": "landing, inputs, buy/update, duplicate product, purchased result, PDF/share",
+                      "components": "product hero, input form, price/CTA, result preview, PDF/share actions",
+                      "minHours": 8,
+                      "maxHours": 16,
+                      "risks": "Нужно проверить различия /products/person и /product/person."
+                },
+                {
+                      "screen": "Партнер в любви /products/synastry",
+                      "section": "Продукты",
+                      "type": "Основной экран",
+                      "size": "L",
+                      "free": true,
+                      "paid": true,
+                      "dark": true,
+                      "states": "landing, partner inputs, buy/update, duplicate product, purchased result, PDF/share",
+                      "components": "product hero, partner data form, price/CTA, result preview, PDF/share actions",
+                      "minHours": 8,
+                      "maxHours": 16,
+                      "risks": "Есть дополнительные поля партнера и риски валидации."
+                },
+                {
+                      "screen": "Контакт с эмоциями /products/emotions",
+                      "section": "Продукты",
+                      "type": "Основной экран",
+                      "size": "M",
+                      "free": true,
+                      "paid": true,
+                      "dark": true,
+                      "states": "landing, inputs, buy/update, duplicate product, purchased result, PDF/share",
+                      "components": "product hero, input form, price/CTA, result preview",
+                      "minHours": 4,
+                      "maxHours": 8,
+                      "risks": "Нужно проверить, есть ли уникальный результат или типовой шаблон продукта."
+                },
+                {
+                      "screen": "Солярный день рождения /products/solyar",
+                      "section": "Продукты",
+                      "type": "Основной экран",
+                      "size": "M",
+                      "free": true,
+                      "paid": true,
+                      "dark": true,
+                      "states": "landing, inputs, buy/update, duplicate product, purchased result, PDF/share",
+                      "components": "product hero, input form, price/CTA, result preview",
+                      "minHours": 4,
+                      "maxHours": 8,
+                      "risks": "Нужно проверить сезонность/условия доступности."
+                },
+                {
+                      "screen": "Личный прогноз на год /products/year-forecast",
+                      "section": "Продукты",
+                      "type": "Основной экран",
+                      "size": "L",
+                      "free": true,
+                      "paid": true,
+                      "dark": true,
+                      "states": "landing, inputs, buy/update, duplicate product, purchased result, PDF/share",
+                      "components": "product hero, input form, price/CTA, result preview, PDF/share actions",
+                      "minHours": 8,
+                      "maxHours": 16,
+                      "risks": "Объем результата и PDF могут увеличить handoff."
+                },
+                {
+                      "screen": "Успешная покупка продукта /products/success",
+                      "section": "Продукты",
+                      "type": "Состояние",
+                      "size": "S",
+                      "free": true,
+                      "paid": true,
+                      "dark": true,
+                      "states": "success, next action, open result",
+                      "components": "success message, CTA, product summary",
+                      "minHours": 2,
+                      "maxHours": 4,
+                      "risks": "Нужно синхронизировать с общей оплатой."
+                },
+                {
+                      "screen": "Результат купленного продукта",
+                      "section": "Продукты",
+                      "type": "Основной экран",
+                      "size": "L",
+                      "free": false,
+                      "paid": true,
+                      "dark": true,
+                      "states": "result, PDF, share, notes, support issue",
+                      "components": "result content, PDF button, share button, notes/bookmark, support link",
+                      "minHours": 8,
+                      "maxHours": 16,
+                      "risks": "Нужно проверить реальные типы результатов по продуктам."
+                },
+                {
+                      "screen": "ИИ-Астролог product card / route TBD",
+                      "section": "AI-чат",
+                      "type": "Основной экран",
+                      "size": "XL",
+                      "free": true,
+                      "paid": true,
+                      "dark": true,
+                      "states": "visible product card, exact route unknown, free/paid unknown, result/chat states unknown",
+                      "components": "AI product card, chat/input TBD, paywall TBD",
+                      "minHours": 16,
+                      "maxHours": 32,
+                      "risks": "В IA отмечено как needs separate pass; оценка предварительная."
+                },
+                {
+                      "screen": "Выбор услуги /services",
+                      "section": "Консультации",
+                      "type": "Список",
+                      "size": "L",
+                      "free": true,
+                      "paid": true,
+                      "dark": true,
+                      "states": "oral/written services, category, price, no services/error",
+                      "components": "service category, service card, price label, CTA",
+                      "minHours": 8,
+                      "maxHours": 16,
+                      "risks": "Нужно проверить категории и коммерческую иерархию."
+                },
+                {
+                      "screen": "Деталь услуги /services/:id",
+                      "section": "Консультации",
+                      "type": "Основной экран",
+                      "size": "M",
+                      "free": true,
+                      "paid": true,
+                      "dark": true,
+                      "states": "description, price, choose astrologer/time, unavailable",
+                      "components": "service detail, price block, CTA, info sections",
+                      "minHours": 4,
+                      "maxHours": 8,
+                      "risks": "Может слиться с выбором специалиста."
+                },
+                {
+                      "screen": "Выбор астролога /professionals",
+                      "section": "Консультации",
+                      "type": "Список",
+                      "size": "L",
+                      "free": true,
+                      "paid": true,
+                      "dark": true,
+                      "states": "list, filtered/category, no free dates, suspended specialist",
+                      "components": "professional card, filters, status, price/slot info",
+                      "minHours": 8,
+                      "maxHours": 16,
+                      "risks": "Нужны реальные состояния доступности специалистов."
+                },
+                {
+                      "screen": "Профиль астролога /professional/:id",
+                      "section": "Консультации",
+                      "type": "Основной экран",
+                      "size": "L",
+                      "free": true,
+                      "paid": true,
+                      "dark": true,
+                      "states": "profile, qualification, competencies, slots, direct link, locked booking",
+                      "components": "profile header, competencies, slot picker, CTA, trust blocks",
+                      "minHours": 8,
+                      "maxHours": 16,
+                      "risks": "Влияет на конверсию записи; нужен UX-прогон."
+                },
+                {
+                      "screen": "Подтверждение консультации /service-confirmation, /confirmation",
+                      "section": "Консультации",
+                      "type": "Форма",
+                      "size": "L",
+                      "free": true,
+                      "paid": true,
+                      "dark": true,
+                      "states": "slot selected, phone required, personal data required, validation, payment entry",
+                      "components": "summary card, slot block, phone step, personal data form, CTA",
+                      "minHours": 8,
+                      "maxHours": 16,
+                      "risks": "Много зависимостей от auth/payment и обязательных данных."
+                },
+                {
+                      "screen": "Сессия консультации /session/:id",
+                      "section": "Консультации",
+                      "type": "Основной экран",
+                      "size": "L",
+                      "free": true,
+                      "paid": true,
+                      "dark": true,
+                      "states": "not paid, paid/waiting, Zoom, passed, cancel/reschedule, rate/complain, refund/canceled",
+                      "components": "session summary, status block, Zoom CTA, cancel/reschedule actions, review/complaint form",
+                      "minHours": 8,
+                      "maxHours": 16,
+                      "risks": "Много edge states после оплаты и до/после сессии."
+                },
+                {
+                      "screen": "Профиль /profile",
+                      "section": "Кабинет",
+                      "type": "Основной экран",
+                      "size": "M",
+                      "free": true,
+                      "paid": true,
+                      "dark": true,
+                      "states": "personal data, subscription, legal, support entry",
+                      "components": "profile section list, personal data card, subscription card, legal links",
+                      "minHours": 4,
+                      "maxHours": 8,
+                      "risks": "Нужно проверить точный состав раздела Вы."
+                },
+                {
+                      "screen": "Управление подпиской profile/subscription_management",
+                      "section": "Подписка / Paywall",
+                      "type": "Настройки",
+                      "size": "L",
+                      "free": true,
+                      "paid": true,
+                      "dark": true,
+                      "states": "trial, active, inactive, payment retry, renew, auto-payment on/off",
+                      "components": "subscription status, tariff card, retry/renew CTA, auto-payment toggle",
+                      "minHours": 8,
+                      "maxHours": 16,
+                      "risks": "Коммерчески чувствительный экран; важно не сломать юридические и платежные состояния."
+                },
+                {
+                      "screen": "Отписка /profile/unsubscribe",
+                      "section": "Подписка / Paywall",
+                      "type": "Форма",
+                      "size": "M",
+                      "free": false,
+                      "paid": true,
+                      "dark": true,
+                      "states": "reason, confirmation, success/error",
+                      "components": "reason list, confirmation block, CTA, retention offer",
+                      "minHours": 4,
+                      "maxHours": 8,
+                      "risks": "Нужны тексты и правила retention."
+                },
+                {
+                      "screen": "Настройки уведомлений /profile/notifications",
+                      "section": "Уведомления",
+                      "type": "Настройки",
+                      "size": "M",
+                      "free": true,
+                      "paid": true,
+                      "dark": true,
+                      "states": "settings, history unclear, custom notifications",
+                      "components": "toggle list, notification item, empty/history state",
+                      "minHours": 4,
+                      "maxHours": 8,
+                      "risks": "В IA поведение истории уведомлений не подтверждено."
+                },
+                {
+                      "screen": "Поддержка /profile/support",
+                      "section": "Кабинет",
+                      "type": "Форма",
+                      "size": "M",
+                      "free": true,
+                      "paid": true,
+                      "dark": true,
+                      "states": "email, subject, message, validation, sent, error",
+                      "components": "support form, validation messages, success state",
+                      "minHours": 4,
+                      "maxHours": 8,
+                      "risks": "Нужно проверить обязательные поля и каналы поддержки."
+                },
+                {
+                      "screen": "Юридические данные / profile/legal_data, details_and_terms",
+                      "section": "Кабинет",
+                      "type": "Состояние",
+                      "size": "S",
+                      "free": true,
+                      "paid": true,
+                      "dark": true,
+                      "states": "legal data, terms, details",
+                      "components": "legal content, link list",
+                      "minHours": 2,
+                      "maxHours": 4,
+                      "risks": "Зависит от финальных юридических текстов."
+                },
+                {
+                      "screen": "Заметки /notes",
+                      "section": "Заметки",
+                      "type": "Список",
+                      "size": "M",
+                      "free": true,
+                      "paid": true,
+                      "dark": true,
+                      "states": "notes list, empty notes, delete, note deleted, bookmark added/removed, product-linked recommendations",
+                      "components": "note card, empty state, delete action, bookmark state",
+                      "minHours": 4,
+                      "maxHours": 8,
+                      "risks": "Нужно проверить, как заметки связаны с рекомендациями и продуктами."
+                },
+                {
+                      "screen": "Натальная карта /natal_map",
+                      "section": "Натальная карта",
+                      "type": "Основной экран",
+                      "size": "L",
+                      "free": true,
+                      "paid": true,
+                      "dark": true,
+                      "states": "missing data, natal map, rectification banner, loading/error",
+                      "components": "birth data summary, natal chart/content, rectification banner, CTA",
+                      "minHours": 8,
+                      "maxHours": 16,
+                      "risks": "Нужно проверить визуальный формат карты и платные ограничения."
+                },
+                {
+                      "screen": "Натальная карта detail /natal/:id",
+                      "section": "Натальная карта",
+                      "type": "Основной экран",
+                      "size": "M",
+                      "free": true,
+                      "paid": true,
+                      "dark": true,
+                      "states": "detail, product-linked content, loading/error",
+                      "components": "natal detail content, section navigation, linked product entry",
+                      "minHours": 4,
+                      "maxHours": 8,
+                      "risks": "Может быть дублем с /natal_map; нужно уточнить роль route."
+                },
+                {
+                      "screen": "Редактирование данных рождения /edit",
+                      "section": "Натальная карта",
+                      "type": "Форма",
+                      "size": "M",
+                      "free": true,
+                      "paid": true,
+                      "dark": true,
+                      "states": "editing, validation errors, one-time final edit warning, saved/error",
+                      "components": "name/gender/date/time/place/email fields, validation messages, warning block",
+                      "minHours": 4,
+                      "maxHours": 8,
+                      "risks": "Критичная валидация данных рождения и предупреждение об одноразовом редактировании."
+                },
+                {
+                      "screen": "Auth iframe / weak auth",
+                      "section": "Авторизация",
+                      "type": "Системное",
+                      "size": "M",
+                      "free": true,
+                      "paid": true,
+                      "dark": true,
+                      "states": "unauthenticated, weak auth, login, restore, agreements",
+                      "components": "auth container, login form, agreement links, error messages",
+                      "minHours": 4,
+                      "maxHours": 8,
+                      "risks": "Нужно проверить реальные auth ограничения внутри приложения."
+                },
+                {
+                      "screen": "Телефон /phone",
+                      "section": "Авторизация",
+                      "type": "Форма",
+                      "size": "M",
+                      "free": true,
+                      "paid": true,
+                      "dark": true,
+                      "states": "phone entry, code request, code validation, error",
+                      "components": "phone field, code field, resend action, validation messages",
+                      "minHours": 4,
+                      "maxHours": 8,
+                      "risks": "Используется и в auth, и в консультациях."
+                },
+                {
+                      "screen": "Персональные данные /personal-data",
+                      "section": "Авторизация",
+                      "type": "Форма",
+                      "size": "M",
+                      "free": true,
+                      "paid": true,
+                      "dark": true,
+                      "states": "personal-data completion, validation, agreements, saved/error",
+                      "components": "personal data form, agreement checkbox, validation messages",
+                      "minHours": 4,
+                      "maxHours": 8,
+                      "risks": "Пересекается с /edit и консультационными данными."
+                },
+                {
+                      "screen": "Common choice /common-choice",
+                      "section": "Авторизация",
+                      "type": "Состояние",
+                      "size": "S",
+                      "free": true,
+                      "paid": true,
+                      "dark": true,
+                      "states": "choice, next step, error",
+                      "components": "choice list, CTA",
+                      "minHours": 2,
+                      "maxHours": 4,
+                      "risks": "Точный сценарий нужно вручную подтвердить."
+                },
+                {
+                      "screen": "Paywall /paywall",
+                      "section": "Подписка / Paywall",
+                      "type": "Оплата",
+                      "size": "L",
+                      "free": true,
+                      "paid": false,
+                      "dark": true,
+                      "states": "locked feature, preview, subscription required, limit reached",
+                      "components": "locked preview, benefit list, tariff CTA, legal text",
+                      "minHours": 8,
+                      "maxHours": 16,
+                      "risks": "Нужно тестировать ценность и понятность, особенно для free-пользователя."
+                },
+                {
+                      "screen": "Тарифы /tariffs",
+                      "section": "Подписка / Paywall",
+                      "type": "Оплата",
+                      "size": "L",
+                      "free": true,
+                      "paid": true,
+                      "dark": true,
+                      "states": "trial, monthly, half-year, yearly, cardless trial, gift days, promo",
+                      "components": "tariff card, price block, promo input, benefits, legal links",
+                      "minHours": 8,
+                      "maxHours": 16,
+                      "risks": "Много коммерческих вариантов и промо-состояний."
+                },
+                {
+                      "screen": "Оплата /payment",
+                      "section": "Оплата",
+                      "type": "Оплата",
+                      "size": "L",
+                      "free": true,
+                      "paid": true,
+                      "dark": true,
+                      "states": "payment config, CloudPayments, product payment, consultation payment, subscription payment, error, retry",
+                      "components": "payment summary, method block, promo code, CTA, error state",
+                      "minHours": 8,
+                      "maxHours": 16,
+                      "risks": "Общая инфраструктура для подписки, продуктов и консультаций."
+                },
+                {
+                      "screen": "Tinkoff callback /tinkoff-payed/:id/:status",
+                      "section": "Оплата",
+                      "type": "Состояние",
+                      "size": "S",
+                      "free": true,
+                      "paid": true,
+                      "dark": true,
+                      "states": "success, fail, pending/return, payment error",
+                      "components": "status message, retry CTA, return CTA",
+                      "minHours": 2,
+                      "maxHours": 4,
+                      "risks": "Нужно сверить реальные статусы redirect."
+                },
+                {
+                      "screen": "Промокод",
+                      "section": "Оплата",
+                      "type": "Состояние",
+                      "size": "M",
+                      "free": true,
+                      "paid": true,
+                      "dark": true,
+                      "states": "applied, incorrect, expired, already used, subscription required, product mismatch",
+                      "components": "promo input, validation message, applied badge",
+                      "minHours": 4,
+                      "maxHours": 8,
+                      "risks": "Много текстовых ошибок; лучше унифицировать как компонент/состояние оплаты."
+                }
+          ],
+          "research": [
+                {
+                      "zone": "Paywall",
+                      "question": "Какой paywall понятнее объясняет ценность подписки?",
+                      "hypothesis": "Превью результата + конкретные выгоды сработают лучше списка функций.",
+                      "method": "Коридорка 5-7 человек",
+                      "respondents": 7,
+                      "minHours": 8,
+                      "maxHours": 16,
+                      "criteria": "Пользователь понимает, что откроется после оплаты, и может пересказать ценность."
+                },
+                {
+                      "zone": "Главная",
+                      "question": "Что должно быть главным первым действием на главной?",
+                      "hypothesis": "Персональный прогноз дня должен быть выше контента и продуктов.",
+                      "method": "2 варианта wireframe",
+                      "respondents": 5,
+                      "minHours": 8,
+                      "maxHours": 16,
+                      "criteria": "Пользователь без подсказок находит прогноз и следующую рекомендацию."
+                }
+          ],
+          "components": [
+                {
+                      "name": "Semantic color tokens",
+                      "group": "Tokens",
+                      "light": true,
+                      "dark": true,
+                      "variants": true,
+                      "size": "L",
+                      "minHours": 8,
+                      "maxHours": 16,
+                      "comment": "surface, text, border, accent, status, overlay."
+                },
+                {
+                      "name": "Bottom navigation",
+                      "group": "Navigation",
+                      "light": true,
+                      "dark": true,
+                      "variants": true,
+                      "size": "M",
+                      "minHours": 4,
+                      "maxHours": 8,
+                      "comment": "active, inactive, badge, disabled."
+                },
+                {
+                      "name": "Forecast card",
+                      "group": "Cards",
+                      "light": true,
+                      "dark": true,
+                      "variants": true,
+                      "size": "L",
+                      "minHours": 8,
+                      "maxHours": 16,
+                      "comment": "day, month, locked, personalized."
+                },
+                {
+                      "name": "Paywall block",
+                      "group": "Paywall",
+                      "light": true,
+                      "dark": true,
+                      "variants": true,
+                      "size": "L",
+                      "minHours": 8,
+                      "maxHours": 16,
+                      "comment": "subscription, one-time purchase, limit reached."
+                }
+          ]
+    };
+
+    const tableConfig = {
+      scenarios: {
+        template: "scenario-row",
+        fields: {
+          section: { type: "select", options: options.section },
+          scenario: { type: "textarea" },
+          userType: { type: "select", options: options.userType },
+          paywall: { type: "checkbox" },
+          ux: { type: "checkbox" },
+          test: { type: "checkbox" },
+          priority: { type: "select", options: options.priority },
+          comment: { type: "textarea" }
+        }
+      },
+      screens: {
+        template: "screen-row",
+        fields: {
+          screen: { type: "textarea" },
+          section: { type: "select", options: options.section },
+          type: { type: "select", options: options.screenType },
+          size: { type: "select", options: options.size },
+          free: { type: "checkbox" },
+          paid: { type: "checkbox" },
+          dark: { type: "checkbox" },
+          states: { type: "textarea" },
+          components: { type: "textarea" },
+          minHours: { type: "number" },
+          maxHours: { type: "number" },
+          risks: { type: "textarea" }
+        }
+      },
+      research: {
+        template: "research-row",
+        fields: {
+          zone: { type: "select", options: options.zone },
+          question: { type: "textarea" },
+          hypothesis: { type: "textarea" },
+          method: { type: "select", options: options.method },
+          respondents: { type: "number" },
+          minHours: { type: "number" },
+          maxHours: { type: "number" },
+          criteria: { type: "textarea" }
+        }
+      },
+      components: {
+        template: "component-row",
+        fields: {
+          name: { type: "textarea" },
+          group: { type: "select", options: options.componentGroup },
+          light: { type: "checkbox" },
+          dark: { type: "checkbox" },
+          variants: { type: "checkbox" },
+          size: { type: "select", options: options.size },
+          minHours: { type: "number" },
+          maxHours: { type: "number" },
+          comment: { type: "textarea" }
+        }
+      }
+    };
+
+    let state = loadState();
+    let dragState = null;
+    let remoteEnabled = false;
+    let remoteSaveTimer = null;
+    let isRemoteLoading = false;
+
+    function getLinkToken() {
+      const params = new URLSearchParams(window.location.search);
+      const urlToken = params.get("key") || params.get("token");
+
+      if (urlToken) {
+        localStorage.setItem(LINK_TOKEN_STORAGE_KEY, urlToken);
+        return urlToken;
+      }
+
+      return localStorage.getItem(LINK_TOKEN_STORAGE_KEY);
+    }
+
+    function setSyncStatus(message, status = "local") {
+      const indicator = document.querySelector("[data-sync-status]");
+      if (!indicator) return;
+
+      indicator.textContent = message;
+      indicator.classList.toggle("is-online", status === "online");
+      indicator.classList.toggle("is-error", status === "error");
+    }
+
+    function mergeState(nextState) {
+      return { scope: {}, check: {}, ...defaults, ...nextState };
+    }
+
+    function loadState() {
+      const saved = localStorage.getItem(STORAGE_KEY);
+      if (!saved) {
+        return structuredClone(mergeState({}));
+      }
+
+      try {
+        return mergeState(JSON.parse(saved));
+      } catch {
+        return structuredClone(mergeState({}));
+      }
+    }
+
+    async function loadRemoteState() {
+      const token = getLinkToken();
+      if (!token) {
+        setSyncStatus("Локальная версия");
+        return;
+      }
+
+      isRemoteLoading = true;
+      setSyncStatus("Загрузка общей версии...");
+
+      try {
+        const response = await fetch(API_ENDPOINT, {
+          method: "GET",
+          headers: { "x-access-token": token },
+          cache: "no-store"
+        });
+
+        if (!response.ok) {
+          throw new Error(`API returned ${response.status}`);
+        }
+
+        const payload = await response.json();
+        remoteEnabled = true;
+
+        if (payload.data) {
+          state = mergeState(payload.data);
+          localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
+          setSyncStatus("Общая версия загружена", "online");
+        } else {
+          setSyncStatus("Общая версия создана", "online");
+          await saveRemoteStateNow();
+        }
+      } catch (error) {
+        remoteEnabled = false;
+        console.error(error);
+        setSyncStatus("Онлайн-синхронизация недоступна", "error");
+      } finally {
+        isRemoteLoading = false;
+      }
+    }
+
+    async function saveRemoteStateNow() {
+      const token = getLinkToken();
+      if (!token) return;
+
+      try {
+        const response = await fetch(API_ENDPOINT, {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            "x-access-token": token
+          },
+          body: JSON.stringify({ data: state })
+        });
+
+        if (!response.ok) {
+          throw new Error(`API returned ${response.status}`);
+        }
+
+        remoteEnabled = true;
+        setSyncStatus("Сохранено в общей версии", "online");
+      } catch (error) {
+        console.error(error);
+        setSyncStatus("Ошибка онлайн-сохранения", "error");
+      }
+    }
+
+    function scheduleRemoteSave() {
+      if (!remoteEnabled || isRemoteLoading) return;
+      clearTimeout(remoteSaveTimer);
+      setSyncStatus("Сохраняю в общую версию...", "online");
+      remoteSaveTimer = setTimeout(saveRemoteStateNow, 700);
+    }
+
+    function saveState(options = {}) {
+      const { remote = true } = options;
+      collectScope();
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
+      updateSummary();
+      if (remote) scheduleRemoteSave();
+    }
+
+    function fillSelect(select, values) {
+      select.innerHTML = "";
+      values.forEach((value) => {
+        const option = document.createElement("option");
+        option.value = value;
+        option.textContent = value;
+        select.appendChild(option);
+      });
+    }
+
+    function applyScreenSizeHours(row, element) {
+      const hours = screenSizeHours[row.size];
+      if (!hours) return;
+
+      row.minHours = hours.minHours;
+      row.maxHours = hours.maxHours;
+      element.querySelector('[data-field="minHours"]').value = hours.minHours;
+      element.querySelector('[data-field="maxHours"]').value = hours.maxHours;
+    }
+
+    function renderTable(tableName) {
+      const tbody = document.querySelector(`[data-table="${tableName}"]`);
+      const config = tableConfig[tableName];
+      tbody.innerHTML = "";
+
+      state[tableName].forEach((row, index) => {
+        const template = document.getElementById(config.template);
+        const element = template.content.firstElementChild.cloneNode(true);
+        element.dataset.index = index;
+
+        Object.entries(config.fields).forEach(([field, fieldConfig]) => {
+          const control = element.querySelector(`[data-field="${field}"]`);
+          if (!control) return;
+
+          if (fieldConfig.type === "select") {
+            fillSelect(control, fieldConfig.options);
+          }
+
+          if (fieldConfig.type === "checkbox") {
+            control.checked = Boolean(row[field]);
+          } else {
+            control.value = row[field] ?? "";
+          }
+
+          control.addEventListener("input", () => {
+            row[field] = fieldConfig.type === "checkbox" ? control.checked : control.value;
+            saveState();
+          });
+
+          control.addEventListener("change", () => {
+            row[field] = fieldConfig.type === "checkbox" ? control.checked : control.value;
+            saveState();
+          });
+        });
+
+        if (tableName === "screens") {
+          element.querySelector('[data-field="size"]').addEventListener("change", () => {
+            applyScreenSizeHours(row, element);
+            saveState();
+          });
+        }
+
+        element.querySelector("[data-remove-row]").addEventListener("click", () => {
+          state[tableName].splice(index, 1);
+          renderTable(tableName);
+          saveState();
+        });
+
+        bindRowDrag(tableName, element, index);
+        tbody.appendChild(element);
+      });
+    }
+
+    function addRow(tableName) {
+      const fields = tableConfig[tableName].fields;
+      const row = {};
+
+      Object.entries(fields).forEach(([field, config]) => {
+        if (config.type === "checkbox") row[field] = false;
+        else if (config.type === "number") row[field] = "";
+        else if (config.type === "select") row[field] = config.options[0];
+        else row[field] = "";
+      });
+
+      if (tableName === "screens") {
+        row.free = true;
+        row.paid = true;
+        row.dark = true;
+        row.minHours = screenSizeHours[row.size].minHours;
+        row.maxHours = screenSizeHours[row.size].maxHours;
+      }
+
+      if (tableName === "components") {
+        row.light = true;
+        row.dark = true;
+        row.variants = true;
+      }
+
+      state[tableName].push(row);
+      renderTable(tableName);
+      saveState();
+    }
+
+    function collectScope() {
+      document.querySelectorAll("[data-persist]").forEach((control) => {
+        const path = control.dataset.persist.split(".");
+        const group = path[0];
+        const key = path[1];
+        state[group] ||= {};
+        state[group][key] = control.type === "checkbox" ? control.checked : control.value;
+      });
+    }
+
+    function renderScope() {
+      document.querySelectorAll("[data-persist]").forEach((control) => {
+        const path = control.dataset.persist.split(".");
+        const value = state[path[0]]?.[path[1]];
+        if (typeof value === "undefined") return;
+
+        if (control.type === "checkbox") {
+          control.checked = Boolean(value);
+        } else {
+          control.value = value;
+        }
+
+        control.addEventListener("input", saveState);
+        control.addEventListener("change", saveState);
+      });
+    }
+
+    function clearDragMarkers(tbody) {
+      tbody.querySelectorAll("tr").forEach((row) => {
+        row.classList.remove("drag-over-before", "drag-over-after");
+      });
+    }
+
+    function moveRow(tableName, fromIndex, toIndex) {
+      const rows = state[tableName];
+      if (!rows || fromIndex === toIndex || fromIndex < 0 || toIndex < 0) return;
+      if (fromIndex >= rows.length || toIndex > rows.length) return;
+
+      const [row] = rows.splice(fromIndex, 1);
+      const adjustedIndex = fromIndex < toIndex ? toIndex - 1 : toIndex;
+      rows.splice(adjustedIndex, 0, row);
+      renderTable(tableName);
+      saveState();
+    }
+
+    function bindRowDrag(tableName, rowElement, index) {
+      const handle = rowElement.querySelector("[data-drag-handle]");
+      if (!handle) return;
+
+      handle.draggable = true;
+
+      handle.addEventListener("dragstart", (event) => {
+        dragState = { tableName, index };
+        rowElement.classList.add("dragging");
+        event.dataTransfer.effectAllowed = "move";
+        event.dataTransfer.setData("text/plain", `${tableName}:${index}`);
+      });
+
+      handle.addEventListener("dragend", () => {
+        dragState = null;
+        rowElement.classList.remove("dragging");
+        clearDragMarkers(rowElement.parentElement);
+      });
+
+      rowElement.addEventListener("dragover", (event) => {
+        if (!dragState || dragState.tableName !== tableName) return;
+        event.preventDefault();
+
+        const rect = rowElement.getBoundingClientRect();
+        const isAfter = event.clientY > rect.top + rect.height / 2;
+        clearDragMarkers(rowElement.parentElement);
+        rowElement.classList.add(isAfter ? "drag-over-after" : "drag-over-before");
+        event.dataTransfer.dropEffect = "move";
+      });
+
+      rowElement.addEventListener("dragleave", (event) => {
+        if (rowElement.contains(event.relatedTarget)) return;
+        rowElement.classList.remove("drag-over-before", "drag-over-after");
+      });
+
+      rowElement.addEventListener("drop", (event) => {
+        if (!dragState || dragState.tableName !== tableName) return;
+        event.preventDefault();
+
+        const rect = rowElement.getBoundingClientRect();
+        const targetIndex = Number(rowElement.dataset.index);
+        const isAfter = event.clientY > rect.top + rect.height / 2;
+        moveRow(tableName, dragState.index, targetIndex + (isAfter ? 1 : 0));
+        dragState = null;
+      });
+    }
+
+    function sumHours(rows, key) {
+      return rows.reduce((sum, row) => sum + (Number(row[key]) || 0), 0);
+    }
+
+    function updateSummary() {
+      const scenarios = state.scenarios || [];
+      const screens = state.screens || [];
+      const research = state.research || [];
+      const components = state.components || [];
+      const minTotal = sumHours(screens, "minHours") + sumHours(research, "minHours") + sumHours(components, "minHours");
+      const maxTotal = sumHours(screens, "maxHours") + sumHours(research, "maxHours") + sumHours(components, "maxHours");
+
+      document.querySelector('[data-summary="scenarios"]').textContent = scenarios.length;
+      document.querySelector('[data-summary="screens"]').textContent = screens.length;
+      document.querySelector('[data-summary="paywalls"]').textContent = scenarios.filter((row) => row.paywall).length;
+      document.querySelector('[data-summary="tests"]').textContent = scenarios.filter((row) => row.test).length + research.filter((row) => row.method && row.method !== "Не требуется").length;
+      document.querySelector('[data-summary="dark"]').textContent = screens.filter((row) => row.dark).length;
+      document.querySelector('[data-summary="hours"]').textContent = `${minTotal}-${maxTotal} ч`;
+    }
+
+    function download(name, content, type) {
+      const blob = new Blob([content], { type });
+      const url = URL.createObjectURL(blob);
+      const link = document.createElement("a");
+      link.href = url;
+      link.download = name;
+      document.body.appendChild(link);
+      link.click();
+      link.remove();
+      URL.revokeObjectURL(url);
+    }
+
+    function csvEscape(value) {
+      return `"${String(value ?? "").replaceAll('"', '""')}"`;
+    }
+
+    function exportScreensCsv() {
+      const rows = state.screens || [];
+      const headers = ["Экран", "Раздел", "Тип", "Сложность", "Free", "Paid", "Dark", "Состояния", "Компоненты", "Мин ч", "Макс ч", "Риски"];
+      const keys = ["screen", "section", "type", "size", "free", "paid", "dark", "states", "components", "minHours", "maxHours", "risks"];
+      const csv = [
+        headers.map(csvEscape).join(","),
+        ...rows.map((row) => keys.map((key) => csvEscape(row[key])).join(","))
+      ].join("\n");
+
+      download("indi-redesign-screens.csv", csv, "text/csv;charset=utf-8");
+    }
+
+    document.querySelectorAll("[data-add-row]").forEach((button) => {
+      button.addEventListener("click", () => addRow(button.dataset.addRow));
+    });
+
+    document.querySelector('[data-action="save"]').addEventListener("click", saveState);
+    document.querySelector('[data-action="print"]').addEventListener("click", () => window.print());
+    document.querySelector('[data-action="export-json"]').addEventListener("click", () => {
+      saveState();
+      download("indi-redesign-sizing.json", JSON.stringify(state, null, 2), "application/json;charset=utf-8");
+    });
+    document.querySelector('[data-action="export-csv"]').addEventListener("click", exportScreensCsv);
+    document.querySelector('[data-action="reset"]').addEventListener("click", () => {
+      if (!confirm("Сбросить таблицу и удалить сохраненные данные из браузера?")) return;
+      localStorage.removeItem(STORAGE_KEY);
+      state = structuredClone(mergeState({}));
+      renderAll();
+      saveState();
+    });
+
+    function renderAll() {
+      renderScope();
+      Object.keys(tableConfig).forEach(renderTable);
+      saveState({ remote: false });
+    }
+
+    async function init() {
+      await loadRemoteState();
+      renderAll();
+    }
+
+    init();
+  </script>
+</body>
+</html>
