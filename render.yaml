@@ -2,15 +2,15 @@ services:
   - type: web
     name: indi-redesign-sizing
     env: node
-    plan: starter
+    plan: free
     buildCommand: npm install
     startCommand: npm start
     envVars:
-      - key: DATA_FILE
-        value: /var/data/sizing.json
       - key: PRIVATE_LINK_TOKEN
         sync: false
-    disk:
-      name: indi-redesign-sizing-data
-      mountPath: /var/data
-      sizeGB: 1
+      - key: SUPABASE_URL
+        sync: false
+      - key: SUPABASE_SERVICE_ROLE_KEY
+        sync: false
+      - key: SIZING_DOCUMENT_KEY
+        value: indi-redesign-sizing

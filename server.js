@@ -5,6 +5,10 @@ const express = require("express");
 const app = express();
 const port = process.env.PORT || 3000;
 const linkToken = process.env.PRIVATE_LINK_TOKEN;
+const documentKey = process.env.SIZING_DOCUMENT_KEY || "indi-redesign-sizing";
+const supabaseUrl = process.env.SUPABASE_URL;
+const supabaseServiceRoleKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
+const supabaseTable = process.env.SUPABASE_TABLE || "sizing_documents";
 const dataFile = process.env.DATA_FILE || path.join(__dirname, "data", "sizing.json");
 
 app.use(express.json({ limit: "2mb" }));
@@ -14,7 +18,61 @@ function isAuthorized(req) {
   return req.header("x-access-token") === linkToken;
 }
 
+function hasSupabaseStorage() {
+  return Boolean(supabaseUrl && supabaseServiceRoleKey);
+}
+
+function getSupabaseHeaders(extra = {}) {
+  return {
+    apikey: supabaseServiceRoleKey,
+    authorization: `Bearer ${supabaseServiceRoleKey}`,
+    ...extra
+  };
+}
+
+function getSupabaseEndpoint(query = "") {
+  const baseUrl = supabaseUrl.replace(/\/$/, "");
+  return `${baseUrl}/rest/v1/${supabaseTable}${query}`;
+}
+
+async function fetchSupabaseDocument() {
+  const query = `?id=eq.${encodeURIComponent(documentKey)}&select=data&limit=1`;
+  const response = await fetch(getSupabaseEndpoint(query), {
+    headers: getSupabaseHeaders()
+  });
+
+  if (!response.ok) {
+    throw new Error(`Supabase GET failed with ${response.status}: ${await response.text()}`);
+  }
+
+  const rows = await response.json();
+  return rows[0]?.data || null;
+}
+
+async function writeSupabaseDocument(data) {
+  const response = await fetch(getSupabaseEndpoint(), {
+    method: "POST",
+    headers: getSupabaseHeaders({
+      "content-type": "application/json",
+      prefer: "resolution=merge-duplicates"
+    }),
+    body: JSON.stringify({
+      id: documentKey,
+      data,
+      updated_at: new Date().toISOString()
+    })
+  });
+
+  if (!response.ok) {
+    throw new Error(`Supabase POST failed with ${response.status}: ${await response.text()}`);
+  }
+}
+
 async function readDocument() {
+  if (hasSupabaseStorage()) {
+    return fetchSupabaseDocument();
+  }
+
   try {
     const raw = await fs.readFile(dataFile, "utf8");
     return JSON.parse(raw);
@@ -25,6 +83,11 @@ async function readDocument() {
 }
 
 async function writeDocument(data) {
+  if (hasSupabaseStorage()) {
+    await writeSupabaseDocument(data);
+    return;
+  }
+
   await fs.mkdir(path.dirname(dataFile), { recursive: true });
   await fs.writeFile(dataFile, JSON.stringify(data, null, 2) + "\n", "utf8");
 }
